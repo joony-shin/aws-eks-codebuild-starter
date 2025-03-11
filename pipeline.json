@@ -1,0 +1,89 @@
+{
+    "pipeline": {
+      "name": "my-pipeline",
+      "roleArn": "arn:aws:iam::156041401852:role/test-role-codebuild",
+      "artifactStore": {
+        "type": "S3",
+        "location": "myawsbucket-joony"
+      },
+      "stages": [
+        {
+          "name": "Source",
+          "actions": [
+            {
+              "name": "SourceAction",
+              "actionTypeId": {
+                "category": "Source",
+                "owner": "ThirdParty",
+                "provider": "GitHub",
+                "version": "1"
+              },
+              "outputArtifacts": [
+                {
+                  "name": "SourceArtifact"
+                }
+              ],
+              "configuration": {
+                "Owner": "joony-shin",
+                "Repo": "aws-eks-codebuild-starter",
+                "Branch": "main",
+                "OAuthToken": "3659f8ad18501a5f925bca5a3810523ad6147909"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Build",
+          "actions": [
+            {
+              "name": "BuildAction",
+              "actionTypeId": {
+                "category": "Build",
+                "owner": "AWS",
+                "provider": "CodeBuild",
+                "version": "1"
+              },
+              "inputArtifacts": [
+                {
+                  "name": "SourceArtifact"
+                }
+              ],
+              "outputArtifacts": [
+                {
+                  "name": "BuildArtifact"
+                }
+              ],
+              "configuration": {
+                "ProjectName": "my-codebuild-project"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Deploy",
+          "actions": [
+            {
+              "name": "DeployAction",
+              "actionTypeId": {
+                "category": "Deploy",
+                "owner": "AWS",
+                "provider": "ECS",
+                "version": "1"
+              },
+              "inputArtifacts": [
+                {
+                  "name": "BuildArtifact"
+                }
+              ],
+              "configuration": {
+                "ClusterName": "my-eks-cluster",
+                "ServiceName": "my-flask-service",
+                "FileName": "imagedefinitions.json"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  }
+  
