@@ -1,1 +1,1 @@
-# aws-eks-codebuld-starter
+# aws-eks-codebuild-starter
